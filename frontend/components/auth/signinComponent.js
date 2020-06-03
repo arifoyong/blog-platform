@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { signin } from "../../actions/auth";
+import { useState, useEffect } from "react";
+import { signin, authenticate, isAuth } from "../../actions/auth";
 import Router from "next/router";
 
 const SigninComponent = () => {
   const [values, setValues] = useState({
-    email: "alexwong@company.com",
+    email: "johnsmith@company.com",
     password: "123456",
     error: "",
     loading: false,
@@ -12,6 +12,10 @@ const SigninComponent = () => {
     showForm: true,
   });
   const { name, email, password, error, loading, message, showForm } = values;
+
+  useEffect(() => {
+    isAuth() && Router.push("/");
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,10 +28,17 @@ const SigninComponent = () => {
         console.table(values);
         setValues({ ...values, error: data.error });
       } else {
+        console.log(data);
         // save token to cookie
         // save user info to local storage
         // authenticate user
-        Router.push(`/`);
+        authenticate(data, () => {
+          if (isAuth() && isAuth().role === 1) {
+            Router.push(`/admin`);
+          } else {
+            Router.push(`/user`);
+          }
+        });
       }
     });
   };

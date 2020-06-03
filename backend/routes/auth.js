@@ -19,8 +19,8 @@ router.post("/signin", userSigninValidator, runValidation, signin);
 router.get("/signout", runValidation, signout);
 
 // test
-router.get("/secret", requireSignin, (req, res) => {
-  res.json({ message: "you have access to secret page" });
-});
+// router.get("/secret", requireSignin, (req, res) => {
+//   res.json({ message: req.user });
+// });
 
 module.exports = router;
