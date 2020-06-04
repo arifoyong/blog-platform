@@ -22,16 +22,17 @@ import Router from "next/router";
 const AppHeader = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authData, setAuthData] = useState(null);
+
+  useEffect(() => {
+    setAuthData(isAuth());
+  }, []);
+
   const toggle = () => setIsOpen(!isOpen);
   const handleSignout = () => {
     signout(() => {
       Router.push("/signin");
     });
   };
-
-  useEffect(() => {
-    setAuthData(isAuth());
-  }, []);
 
   return (
     <div>
@@ -62,7 +63,7 @@ const AppHeader = (props) => {
             {authData && authData.role === 0 && (
               <NavItem>
                 <Link href="/user">
-                  <NavLink href="">{`${isAuth().name}'s Dashboard`}</NavLink>
+                  <NavLink href="">{`${isAuth().name}`}</NavLink>
                 </Link>
               </NavItem>
             )}
@@ -70,7 +71,7 @@ const AppHeader = (props) => {
             {authData && authData.role === 1 && (
               <NavItem>
                 <Link href="/admin">
-                  <NavLink href="">{`${isAuth().name}'s Dashboard`}</NavLink>
+                  <NavLink href="">{`${isAuth().name}`}</NavLink>
                 </Link>
               </NavItem>
             )}
