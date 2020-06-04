@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Collapse,
   Navbar,
@@ -21,7 +21,17 @@ import Router from "next/router";
 
 const AppHeader = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [authData, setAuthData] = useState(null);
   const toggle = () => setIsOpen(!isOpen);
+  const handleSignout = () => {
+    signout(() => {
+      Router.push("/signin");
+    });
+  };
+
+  useEffect(() => {
+    setAuthData(isAuth());
+  }, []);
 
   return (
     <div>
@@ -34,7 +44,7 @@ const AppHeader = (props) => {
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
-            {!isAuth() && (
+            {!authData && (
               <React.Fragment>
                 <NavItem>
                   <Link href="/signin">
@@ -49,18 +59,25 @@ const AppHeader = (props) => {
               </React.Fragment>
             )}
 
-            {isAuth() && (
+            {authData && authData.role === 0 && (
               <NavItem>
-                <NavLink
-                  href=""
-                  onClick={() =>
-                    signout(() => {
-                      Router.push("/signin");
-                    })
-                  }
-                >
-                  Signout
-                </NavLink>
+                <Link href="/user">
+                  <NavLink href="">{`${isAuth().name}'s Dashboard`}</NavLink>
+                </Link>
+              </NavItem>
+            )}
+
+            {authData && authData.role === 1 && (
+              <NavItem>
+                <Link href="/admin">
+                  <NavLink href="">{`${isAuth().name}'s Dashboard`}</NavLink>
+                </Link>
+              </NavItem>
+            )}
+
+            {authData && (
+              <NavItem>
+                <NavLink onClick={() => handleSignout()}>Signout</NavLink>
               </NavItem>
             )}
           </Nav>

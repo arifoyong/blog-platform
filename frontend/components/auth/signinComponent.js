@@ -20,23 +20,19 @@ const SigninComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setValues({ ...values, loading: true, error: false });
-    console.table(values);
+
     const user = { email, password };
 
     signin(user).then((data) => {
       if (data.error) {
-        console.table(values);
         setValues({ ...values, error: data.error });
       } else {
         console.log(data);
-        // save token to cookie
-        // save user info to local storage
-        // authenticate user
         authenticate(data, () => {
           if (isAuth() && isAuth().role === 1) {
             Router.push(`/admin`);
           } else {
-            Router.push(`/user`);
+            Router.push(`/`);
           }
         });
       }

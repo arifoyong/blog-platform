@@ -1,9 +1,12 @@
 import Layout from "../../components/layout";
+import Admin from "../../components/auth/admin";
 
 const AdminIndex = () => {
   return (
     <Layout>
-      <p>Admin Dashboard</p>
+      <Admin>
+        <p>Admin Dashboard</p>
+      </Admin>
     </Layout>
   );
 };
