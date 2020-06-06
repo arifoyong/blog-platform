@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+
+// Controllers
 const {
   requireSignin,
   authMiddleware,
@@ -11,6 +13,7 @@ const { create, list, read, remove } = require("../controllers/tag");
 const { tagCreateValidator } = require("../validators/tag");
 const { runValidation } = require("../validators");
 
+// Router
 router.post(
   "/tag",
   tagCreateValidator,
@@ -19,7 +22,6 @@ router.post(
   adminMiddleware,
   create
 );
-
 router.get("/tags", list);
 router.get("/tag/:slug", read);
 router.delete("/tag/:slug", remove);
