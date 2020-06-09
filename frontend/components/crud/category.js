@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Router from "next/router";
 import { isAuth, getCookie } from "../../actions/auth";
-import { create } from "../../actions/category";
+import { create, getCategories, removeCategory } from "../../actions/category";
 
 const Category = () => {
   const [values, setValues] = useState({
@@ -11,10 +11,25 @@ const Category = () => {
     success: false,
     categories: [],
     removed: false,
+    reload: false,
   });
 
-  const { name, error, success, categories, removed } = values;
+  const { name, error, success, categories, removed, reload } = values;
   const token = getCookie("token");
+
+  useEffect(() => {
+    loadCategories();
+  }, [reload]);
+
+  const loadCategories = () => {
+    getCategories().then((data) => {
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setValues({ ...values, categories: data });
+      }
+    });
+  };
 
   const handleChange = (e) => {
     setValues({
@@ -22,20 +37,78 @@ const Category = () => {
       name: e.target.value,
       error: false,
       success: false,
-      removed: "",
+      removed: false,
     });
+  };
+
+  const showSuccess = () => {
+    if (success) {
+      return <p className="text-success">"Category is created</p>;
+    }
+  };
+
+  const showError = () => {
+    if (error) {
+      return <p className="text-danger">Category existed</p>;
+    }
+  };
+
+  const showRemoved = () => {
+    if (removed) {
+      return <p className="text-danger">Category removed</p>;
+    }
   };
 
   const clickSubmit = (e) => {
     e.preventDefault();
-
     create({ name }, token).then((data) => {
-      console.log(data);
-      // if (data.error) {
-      //   setValues({ ...values, error: data.error, success: false });
-      // } else {
-      //   setValues({ ...values, error: false, success: true, name: "" });
-      // }
+      if (data.error) {
+        setValues({ ...values, error: data.error, success: false });
+      } else {
+        setValues({
+          ...values,
+          error: false,
+          success: true,
+          name: "",
+          reload: !reload,
+        });
+      }
+    });
+  };
+
+  const deleteCategory = (slug) => {
+    const answer = window.confirm("Are you sure to delete this category?");
+
+    if (answer) {
+      removeCategory(slug, token).then((data) => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          setValues({
+            ...values,
+            error: false,
+            success: false,
+            name: "",
+            removed: !removed,
+            reload: !reload,
+          });
+        }
+      });
+    }
+  };
+
+  const showCategories = () => {
+    return categories.map((category, i) => {
+      return (
+        <button
+          key={i}
+          onDoubleClick={() => deleteCategory(category.slug)}
+          title="Double click to delete"
+          className="btn btn-outline-primary mr-1 ml-1 mt-3"
+        >
+          {category.name}
+        </button>
+      );
     });
   };
 
@@ -60,7 +133,21 @@ const Category = () => {
     </form>
   );
 
-  return <React.Fragment>{newCategoryForm()}</React.Fragment>;
+  const mouseMoveHandler = () => {
+    setValues({ ...values, error: false, success: false, removed: false });
+  };
+  return (
+    <React.Fragment>
+      {showSuccess()}
+      {showError()}
+      {showRemoved()}
+
+      <div onMouseMove={() => mouseMoveHandler()}>
+        {newCategoryForm()}
+        {showCategories()}
+      </div>
+    </React.Fragment>
+  );
 };
 
 export default Category;
