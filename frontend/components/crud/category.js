@@ -61,6 +61,7 @@ const Category = () => {
 
   const clickSubmit = (e) => {
     e.preventDefault();
+
     create({ name }, token).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error, success: false });
@@ -116,14 +117,15 @@ const Category = () => {
     <form onSubmit={clickSubmit}>
       <div className="form-group">
         <label htmlFor="" className="text-muted">
-          <input
-            type="text"
-            className="form-control"
-            onChange={handleChange}
-            value={name}
-            required
-          />
+          Category
         </label>
+        <input
+          type="text"
+          className="form-control"
+          onChange={handleChange}
+          value={name}
+          required
+        />
       </div>
       <div>
         <button type="submit" className="btn btn-primary">
