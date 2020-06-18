@@ -82,7 +82,9 @@ const AppHeader = (props) => {
 
             {authData && (
               <NavItem>
-                <NavLink onClick={() => handleSignout()}>Signout</NavLink>
+                <NavLink href="" onClick={() => handleSignout()}>
+                  Signout
+                </NavLink>
               </NavItem>
             )}
           </Nav>

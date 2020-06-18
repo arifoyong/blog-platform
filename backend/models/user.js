@@ -57,6 +57,7 @@ userSchema
   .virtual("password")
   .set(function (password) {
     // create a temporary variable called _password
+    
     this._password = password;
     // generate salt
     this.salt = this.makeSalt();
@@ -73,6 +74,7 @@ userSchema.methods = {
     return this.encryptPassword(plainText) === this.hashed_password;
   },
   encryptPassword: function (password) {
+    console.log("PW", password);
     if (!password) return "";
     try {
       return crypto

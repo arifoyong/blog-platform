@@ -89,3 +89,103 @@ exports.create = (req, res) => {
     });
   });
 };
+
+exports.list = (req, res) => {
+  Blog.find({})
+    .populate("categories", "_id name slug")
+    .populate("tags", "_id name slug")
+    .populate("postedBy", "_id name username")
+    .select(
+      "_id title slug excerpt categories tags postedBy createdAt updatedAt"
+    )
+    .exec((err, data) => {
+      if (err) {
+        return res.json({ error: errorHandler(err) });
+      }
+
+      res.json(data);
+    });
+};
+
+exports.listAllBlogsCategoriesTags = (req, res) => {
+  const limit = req.body.limit ? parseInt(req.body.limit) : 10;
+  const skip = req.body.skip ? parseInt(req.body.skip) : 0;
+
+  let blogs;
+  let categories;
+  let tags;
+
+  Blog.find({})
+    .populate("categories", "_id name slug")
+    .populate("tags", "_id name slug")
+    .populate("postedBy", "_id name username profile")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .select(
+      "_id title slug excerpt categories tags postedBy createdAt updatedAt"
+    )
+    .exec((err, data) => {
+      if (err) {
+        return res.json({ error: errorHandler(err) });
+      }
+
+      blogs = data;
+
+      Category.find({}).exec((err, cat) => {
+        if (err) {
+          return res.json({ error: errorHandler(err) });
+        }
+
+        categories = cat;
+        Tag.find({}).exec((err, tg) => {
+          if (err) {
+            return res.json({ error: errorHandler(err) });
+          }
+
+          tags = tg;
+
+          return res.json({ blogs, categories, tags, size: blogs.length });
+        });
+      });
+    });
+};
+
+exports.read = (req, res) => {
+  const slug = req.params.slug.toLowerCase();
+
+  Blog.findOne({ slug })
+    .populate("categories", "_id name slug")
+    .populate("tags", "_id name slug")
+    .populate("postedBy", "_id name username profile")
+    .select(
+      "_id title slug body mtitle mdesc categories tags postedBy createdAt updatedAt"
+    )
+    .exec((err, data) => {
+      if (err) {
+        return res.json({ error: errorHandler(err) });
+      }
+
+      res.json(data);
+    });
+};
+
+exports.remove = (req, res) => {
+  const slug = req.params.slug.toLowerCase();
+
+  console.log(slug);
+  Blog.findOneAndRemove({ slug }).exec((err, data) => {
+    if (err) {
+      return res.json({ error: errorHandler(err) });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    res.json({ message: "Blog has been deleted successfully" });
+  });
+};
+
+exports.update = (req, res) => {
+  const slug = req.params.slug.toLowerCase();
+};
