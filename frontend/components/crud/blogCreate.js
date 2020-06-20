@@ -10,7 +10,7 @@ import { blogCreate, createBlog } from "../../actions/blog";
 import { QuillModules, QuillFormats } from "../../helpers/quill";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-import "../../node_modules/react-quill/dist/quill.snow.css";
+// import "../../node_modules/react-quill/dist/quill.snow.css";
 
 const BlogCreate = ({ router }) => {
   const blogFromLocalStore = () => {

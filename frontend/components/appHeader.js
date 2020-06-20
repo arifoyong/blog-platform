@@ -48,7 +48,12 @@ const AppHeader = (props) => {
         </Link>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
-          <Nav className="mr-auto" navbar>
+          <Nav className="ml-auto" navbar>
+            <NavItem>
+              <Link href="/blogs">
+                <NavLink href="">Blogs</NavLink>
+              </Link>
+            </NavItem>
             {!authData && (
               <React.Fragment>
                 <NavItem>
