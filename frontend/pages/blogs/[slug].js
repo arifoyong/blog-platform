@@ -1,14 +1,31 @@
 import Head from "next/head";
 import Link from "next/link";
 import { withRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../../components/layout";
-import { singleBlog } from "../../actions/blog";
+import { singleBlog, listRelated } from "../../actions/blog";
 import { API, DOMAIN, APP_NAME, FB_APP_ID } from "../../config";
 import renderHTML from "react-render-html";
 import moment from "moment";
+import SmallCard from "../../components/blog/smallCard";
 
 const SingleBlog = ({ blog, query }) => {
+  const [related, setRelated] = useState([]);
+
+  const loadRelated = () => {
+    listRelated({ blog }).then((data) => {
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setRelated(data);
+      }
+    });
+  };
+
+  useEffect(() => {
+    loadRelated();
+  }, []);
+
   const head = () => (
     <Head>
       <title>
@@ -45,6 +62,14 @@ const SingleBlog = ({ blog, query }) => {
       <Link key={i} href={`/tags/${tag.slug}`}>
         <a className="btn btn-outline-info mr-1 ml-1 mt-3">{tag.name}</a>
       </Link>
+    ));
+  };
+
+  const showRelatedBlogs = () => {
+    return related.map((blog, i) => (
+      <div key={i} className="col-md-4">
+        <SmallCard blog={blog} />
+      </div>
     ));
   };
 
@@ -92,7 +117,8 @@ const SingleBlog = ({ blog, query }) => {
             <div className="container pb-5">
               <h4 className="text-center pt-5 pb-5">Related blogs</h4>
               <br />
-              <p>show related blogs</p>
+              {/* {JSON.stringify(related)} */}
+              <div className="row">{related && showRelatedBlogs()}</div>
             </div>
 
             <div className="container pb-5">

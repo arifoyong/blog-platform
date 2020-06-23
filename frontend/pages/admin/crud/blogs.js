@@ -1,20 +1,20 @@
 import Layout from "../../../components/layout";
 import Admin from "../../../components/auth/admin";
-import BlogCreate from "../../../components/crud/blogCreate";
+import BlogRead from "../../../components/crud/blogRead";
 import Link from "next/link";
 
-const Blog = () => {
+const Blogs = () => {
   return (
     <Layout>
       <Admin>
-        <div className="container-fluid">
+        <div className="container">
           <div className="row">
             <div className="col-md-12 pt-5 pb-5">
-              <h2>Create a new blog</h2>
+              <h2>Manage blogs</h2>
             </div>
 
             <div className="col-md-12">
-              <BlogCreate />
+              <BlogRead />
             </div>
           </div>
         </div>
@@ -23,4 +23,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default Blogs;
