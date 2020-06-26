@@ -8,6 +8,7 @@ import { getCategories } from "../../actions/category";
 import { getTags } from "../../actions/tag";
 import { singleBlog, updateBlog } from "../../actions/blog";
 import { QuillModules, QuillFormats } from "../../helpers/quill";
+import { API } from "../../config";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -31,6 +32,7 @@ const BlogUpdate = ({ router }) => {
   });
 
   const { error, success, formData, title } = values;
+  const token = getCookie("token");
 
   useEffect(() => {
     setValues({ ...values, formData: new FormData() });
@@ -186,8 +188,26 @@ const BlogUpdate = ({ router }) => {
     formData.set("body", e);
   };
 
-  const editBlog = () => {
+  const editBlog = (e) => {
     console.log("update blog");
+    e.preventDefault();
+    updateBlog(formData, token, router.query.slug).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({
+          ...values,
+          title: "",
+          success: `Blog title "${data.title}" has been updated`,
+        });
+        console.log(isAuth());
+        if (isAuth() && isAuth().role === 1) {
+          Router.push(`/admin`);
+        } else {
+          Router.push(`/user`);
+        }
+      }
+    });
   };
 
   const updateBlogForm = () => {
@@ -221,19 +241,44 @@ const BlogUpdate = ({ router }) => {
     );
   };
 
+  const showError = () => (
+    <div
+      className="alert alert-danger"
+      style={{ display: error ? "" : "none" }}
+    >
+      {error}
+    </div>
+  );
+
+  const showSuccess = () => (
+    <div
+      className="alert alert-success"
+      style={{ display: success ? "" : "none" }}
+    >
+      {success}
+    </div>
+  );
+
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-8">
           {updateBlogForm()}
-          <div className="pt-4">show success & derror</div>
+          <div className="pt-4">
+            {showError()}
+            {showSuccess()}
+          </div>
         </div>
         <div className="col-md-4">
           <div>
             <div className="form-group pb-2">
               <h5>Featured image</h5>
 
-              <small className="text-muted">Max size: 1MB</small>
+              <img
+                src={`${API}/blog/photo/${router.query.slug}`}
+                alt={title}
+                style={{ width: "50%" }}
+              />
               <br />
               <label className="btn btn-outline-info">
                 Upload featured image
