@@ -284,3 +284,27 @@ exports.listRelated = (req, res) => {
       res.json(blogs);
     });
 };
+
+exports.listSearch = (req, res) => {
+  console.log("Query", req.query);
+  const { search } = req.query;
+
+  console.log("Search=", search);
+  if (search) {
+    Blog.find(
+      {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { body: { $regex: search, $options: "i" } },
+        ],
+      },
+      (err, blogs) => {
+        if (err) {
+          return res.status(400).json({ error: errorHandler(err) });
+        }
+
+        res.json(blogs);
+      }
+    ).select("-photo -body");
+  }
+};

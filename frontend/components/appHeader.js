@@ -18,6 +18,7 @@ import NProgress from "nprogress";
 import { APP_NAME } from "../config";
 import { signout, isAuth } from "../actions/auth";
 import Router from "next/router";
+import Search from "./blog/search";
 
 Router.onRouteChangeStart = (url) => NProgress.start();
 Router.onRouteChangeComplete = (url) => NProgress.done();
@@ -39,7 +40,7 @@ const AppHeader = (props) => {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Navbar color="light" light expand="md">
         <Link href="/">
           <NavLink className="font-weight-bold" href="">
@@ -95,7 +96,8 @@ const AppHeader = (props) => {
           </Nav>
         </Collapse>
       </Navbar>
-    </div>
+      <Search />
+    </React.Fragment>
   );
 };
 
