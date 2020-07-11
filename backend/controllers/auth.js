@@ -1,7 +1,9 @@
 const User = require("../models/user");
+const Blog = require("../models/blog");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
+const { errorHandler } = require("../helpers/dbErrorHandler");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -89,6 +91,37 @@ exports.adminMiddleware = (req, res, next) => {
     }
 
     req.profile = user;
+    next();
+  });
+};
+
+exports.canUpdateDeleteBlog = (req, res, next) => {
+  const slug = req.params.slug.toLowerCase();
+  console.log(req.params);
+  Blog.findOne({ slug: slug }).exec((err, data) => {
+    // console.log(data);
+    if (err) {
+      return res.status(400).json({ error: errorHandler(err) });
+    }
+
+    console.log(data.postedBy._id.toString());
+    console.log(req.profile._id.toString());
+    console.log(
+      "equality",
+      data.postedBy._id.toString() === req.profile._id.toString()
+    );
+
+    let authorizedUser = false;
+    if (data.postedBy._id.toString() === req.profile._id.toString()) {
+      authorizedUser = true;
+    }
+
+    console.log("Authorized user: ", authorizedUser);
+
+    if (!authorizedUser) {
+      return res.status(400).json({ error: "Not authorized user" });
+    }
+
     next();
   });
 };

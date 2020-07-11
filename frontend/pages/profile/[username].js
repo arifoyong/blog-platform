@@ -33,7 +33,7 @@ const Username = ({ user, blogs, query }) => {
   const showUserBlogs = () => {
     return blogs.map((blog, i) => {
       return (
-        <div className="mt-4 mb-4" key={i}>
+        <div className="mt-4 mb-4 pl-2" key={i}>
           <Link href={`/blogs/${blog.slug}`}>
             <a className="lead">{blog.title}</a>
           </Link>
@@ -51,13 +51,24 @@ const Username = ({ user, blogs, query }) => {
             <div className="col-md-12">
               <div className="card">
                 <div className="card-body">
-                  <h5>{user.name}</h5>
-                  {/* <Link href={`${user.profile}`}>
-                    <a>View Profile</a>
-                  </Link> */}
-                  <p className="text-muted">
-                    Joined: {moment(user.createdAt).fromNow()}
-                  </p>
+                  <div className="row">
+                    <div className="col-md-8">
+                      <h5>{user.name}</h5>
+
+                      <p className="text-muted">
+                        Joined: {moment(user.createdAt).fromNow()}
+                      </p>
+                    </div>
+
+                    <div className="col-md-4">
+                      <img
+                        src={`${API}/user/photo/${user.username}`}
+                        className="img img-fluid img-thumbnail mb-3"
+                        style={{ maxHeight: "auto", maxWidth: "100%" }}
+                        alt="userProfile"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -80,9 +91,10 @@ const Username = ({ user, blogs, query }) => {
             <div className="col-md-6">
               <div className="card">
                 <div className="card-body">
-                  <h5 className="card-title bg-primary pb-4 pl-4 pt-4 pr-4">
+                  <h5 className="card-title bg-primary pb-4 pl-4 pt-4 pr-4 text-white">
                     Message {user.name}
                   </h5>
+                  <p>Contact</p>
                 </div>
               </div>
             </div>

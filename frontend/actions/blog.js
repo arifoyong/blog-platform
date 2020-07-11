@@ -1,10 +1,18 @@
 import fetch from "isomorphic-unfetch";
 import queryString from "query-string";
 import { API } from "../config";
+import { isAuth } from "./auth";
 
 export const createBlog = (blog, token) => {
-  console.log(blog);
-  return fetch(`${API}/blog`, {
+  let blogEndPoint;
+
+  if (isAuth() && isAuth().role === 1) {
+    blogEndPoint = `${API}/blog`;
+  } else if (isAuth() && isAuth().role === 0) {
+    blogEndPoint = `${API}/user/blog`;
+  }
+
+  return fetch(`${blogEndPoint}`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -63,8 +71,16 @@ export const listRelated = (blog) => {
     .catch((err) => console.log(err));
 };
 
-export const list = (slug) => {
-  return fetch(`${API}/blogs`, {
+export const list = (username) => {
+  let listBlogsEndPoint;
+
+  if (username) {
+    listBlogsEndPoint = `${API}/${username}/blogs`;
+  } else {
+    listBlogsEndPoint = `${API}/blogs`;
+  }
+
+  return fetch(`${listBlogsEndPoint}`, {
     method: "GET",
   })
     .then((response) => {
@@ -74,7 +90,15 @@ export const list = (slug) => {
 };
 
 export const removeBlog = (slug, token) => {
-  return fetch(`${API}/blog/${slug}`, {
+  let deleteBlogEndPoint;
+
+  if (isAuth() && isAuth().role === 1) {
+    deleteBlogEndPoint = `${API}/blog/${slug}`;
+  } else if (isAuth() && isAuth().role === 0) {
+    deleteBlogEndPoint = `${API}/user/blog/${slug}`;
+  }
+
+  return fetch(`${deleteBlogEndPoint}`, {
     method: "DELETE",
     headers: {
       Accept: "application/json",
@@ -89,7 +113,15 @@ export const removeBlog = (slug, token) => {
 };
 
 export const updateBlog = (blog, token, slug) => {
-  return fetch(`${API}/blog/${slug}`, {
+  let updateBlogEndPoint;
+
+  if (isAuth() && isAuth().role === 1) {
+    updateBlogEndPoint = `${API}/blog/${slug}`;
+  } else if (isAuth() && isAuth().role === 0) {
+    updateBlogEndPoint = `${API}/user/blog/${slug}`;
+  }
+
+  return fetch(`${updateBlogEndPoint}`, {
     method: "PUT",
     headers: {
       Accept: "application/json",

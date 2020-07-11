@@ -88,11 +88,19 @@ const AppHeader = (props) => {
 
             {authData && (
               <NavItem>
-                <NavLink href="" onClick={() => handleSignout()}>
+                <NavLink href="/" onClick={() => handleSignout()}>
                   Signout
                 </NavLink>
               </NavItem>
             )}
+
+            <NavItem>
+              <Link href="/user/crud/blog">
+                <NavLink className="btn btn-primary text-light" href="">
+                  Write Blog
+                </NavLink>
+              </Link>
+            </NavItem>
           </Nav>
         </Collapse>
       </Navbar>
